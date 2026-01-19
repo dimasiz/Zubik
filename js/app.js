@@ -7,37 +7,87 @@ import { showNotification, validateEmail, validatePhone } from './utils.js';
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Приложение ДентаКлиник запущено');
-    
-    // Инициализировать UI
+
     initUI();
-    
-    // Мониторинг подключения для локальной базы
     setupConnectionMonitoring();
-    
+    setupFormHandlers();
+
+    // Навигация по хэшу
+    window.addEventListener('hashchange', () => {
+        navigate(getPageFromHash());
+    });
+
+    // Показать страницу из URL-хэша (если есть), чтобы страница не была пустой
+    goTo(getPageFromHash());
+
     // Слушать изменения аутентификации
     onAuthChange((userData) => {
+        updateNavigation();
+
+        const requestedPage = getPageFromHash();
+
         if (userData) {
-            console.log('Пользователь вошел:', userData);
-            updateNavigation();
-            
-            // Перенаправить на соответствующую панель
-            if (userData.role === 'patient') {
-                navigate('patient-dashboard');
-            } else if (userData.role === 'doctor') {
-                navigate('doctor-dashboard');
-            } else if (userData.role === 'admin') {
-                navigate('admin-dashboard');
+            const roleHome =
+                userData.role === 'patient'
+                    ? 'patient-dashboard'
+                    : userData.role === 'doctor'
+                        ? 'doctor-dashboard'
+                        : 'admin-dashboard';
+
+            // Если пользователь уже вошел, то страницы входа/регистрации не показываем
+            if (['home', 'login', 'register'].includes(requestedPage)) {
+                goTo(roleHome);
+                return;
             }
-        } else {
-            console.log('Пользователь не авторизован');
-            updateNavigation();
-            navigate('home');
+
+            goTo(requestedPage);
+            return;
         }
+
+        // Неавторизованный пользователь может посещать только публичные страницы
+        const publicPages = new Set(['home', 'services', 'login', 'register']);
+        goTo(publicPages.has(requestedPage) ? requestedPage : 'login');
     });
-    
-    // Настроить обработчики форм после загрузки страницы
-    setupFormHandlers();
 });
+
+function goTo(page) {
+    const current = window.location.hash.replace('#', '').trim();
+
+    if (current === page) {
+        navigate(page);
+        return;
+    }
+
+    window.location.hash = page;
+}
+
+function getPageFromHash() {
+    const hash = window.location.hash.replace('#', '').trim();
+    if (!hash) return 'home';
+
+    const knownPages = new Set([
+        'home',
+        'services',
+        'login',
+        'register',
+        'patient-dashboard',
+        'new-appointment',
+        'patient-history',
+        'patient-profile',
+        'doctor-dashboard',
+        'doctor-patients',
+        'doctor-statistics',
+        'doctor-profile',
+        'admin-dashboard',
+        'admin-services',
+        'admin-appointments',
+        'admin-doctors',
+        'admin-materials',
+        'admin-receipts'
+    ]);
+
+    return knownPages.has(hash) ? hash : 'home';
+}
 
 // Мониторинг подключения
 function setupConnectionMonitoring() {

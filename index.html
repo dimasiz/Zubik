@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Стоматологическая Клиника - Система Управления</title>
-    
+
+    <meta name="description" content="ДентаКлиник — система управления стоматологической клиникой: запись на прием, расписание врача и административная панель.">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/theme.css">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
@@ -23,25 +25,65 @@
     <nav id="main-nav" class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <h1>🦷 ДентаКлиник</h1>
+                <h1>ДентаКлиник</h1>
                 <span id="connection-status" class="status-indicator online" title="Online"></span>
             </div>
+
             <div class="nav-menu">
                 <ul id="nav-links">
-                    <!-- Динамически заполняется -->
+                    <li><a href="#home" data-page="home">Главная</a></li>
+                    <li><a href="#services" data-page="services">Услуги</a></li>
+                    <li><a href="#login" data-page="login">Вход</a></li>
+                    <li><a href="#register" data-page="register">Регистрация</a></li>
                 </ul>
+
                 <div class="nav-user">
                     <span id="user-name"></span>
                     <button id="logout-btn" class="btn btn-secondary" style="display: none;">Выход</button>
                 </div>
             </div>
-            <button class="theme-toggle" id="theme-toggle">🌓</button>
+
+            <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему">🌓</button>
         </div>
     </nav>
 
+    <noscript>
+        <div class="container" style="padding-top: 1rem;">
+            <div class="alert alert-warning">
+                Для работы приложения требуется JavaScript. Пожалуйста, включите JavaScript в браузере.
+            </div>
+        </div>
+    </noscript>
+
     <!-- Main Content Area -->
     <main id="app" class="container">
-        <!-- Динамический контент загружается здесь -->
+        <!-- Начальный контент, чтобы страница не была пустой даже без JS -->
+        <div class="hero">
+            <h1>Стоматология нового поколения</h1>
+            <p>Мы объединяем передовые технологии и искреннюю заботу о каждом пациенте для создания вашей идеальной улыбки.</p>
+            <div class="mt-3">
+                <a class="btn btn-primary" href="#services" data-page="services">Наши услуги</a>
+                <a class="btn btn-outline" href="#register" data-page="register" style="margin-left: 1rem;">Записаться на прием</a>
+            </div>
+        </div>
+
+        <div class="grid grid-3 mt-3">
+            <div class="card">
+                <div class="icon-xl">🛡️</div>
+                <h3>Гарантия качества</h3>
+                <p>Используем только сертифицированные материалы премиум-класса от ведущих мировых производителей.</p>
+            </div>
+            <div class="card">
+                <div class="icon-xl">💎</div>
+                <h3>Цифровая точность</h3>
+                <p>Применяем 3D-сканирование и компьютерное моделирование для достижения безупречного результата.</p>
+            </div>
+            <div class="card">
+                <div class="icon-xl">☁️</div>
+                <h3>Лечение без боли</h3>
+                <p>Современные методы анестезии и деликатный подход обеспечивают полный комфорт во время процедур.</p>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -51,6 +93,525 @@
         </div>
     </footer>
 
+    <!-- Templates (видны в HTML, но не отображаются напрямую) -->
+    <template id="tpl-home">
+        <div class="hero">
+            <h1>Стоматология нового поколения</h1>
+            <p>Мы объединяем передовые технологии и искреннюю заботу о каждом пациенте для создания вашей идеальной улыбки.</p>
+            <div class="mt-3">
+                <button class="btn btn-primary" type="button" data-navigate="services">Наши услуги</button>
+                <button class="btn btn-outline" type="button" data-navigate="register" style="margin-left: 1rem;">Записаться на прием</button>
+            </div>
+        </div>
+
+        <div class="grid grid-3 mt-3">
+            <div class="card">
+                <div class="icon-xl">🛡️</div>
+                <h3>Гарантия качества</h3>
+                <p>Используем только сертифицированные материалы премиум-класса от ведущих мировых производителей.</p>
+            </div>
+            <div class="card">
+                <div class="icon-xl">💎</div>
+                <h3>Цифровая точность</h3>
+                <p>Применяем 3D-сканирование и компьютерное моделирование для достижения безупречного результата.</p>
+            </div>
+            <div class="card">
+                <div class="icon-xl">☁️</div>
+                <h3>Лечение без боли</h3>
+                <p>Современные методы анестезии и деликатный подход обеспечивают полный комфорт во время процедур.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-login">
+        <div class="auth-layout">
+            <div class="card auth-card">
+                <div class="card-header auth-header">
+                    <h2>С возвращением!</h2>
+                    <p class="text-secondary">Войдите в свой аккаунт ДентаКлиник</p>
+                </div>
+
+                <div class="card-body">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Email</label>
+                            <input type="email" class="form-control" id="login-email" placeholder="example@mail.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-password">Пароль</label>
+                            <input type="password" class="form-control" id="login-password" placeholder="••••••••" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+
+                        <div class="divider"><span>или</span></div>
+
+                        <button type="button" class="btn btn-outline" id="google-login-btn" style="width: 100%;">
+                            <span class="btn-icon" aria-hidden="true">G</span>
+                            Войти через Google
+                        </button>
+                    </form>
+
+                    <div class="mt-3 text-center">
+                        <p>Нет аккаунта? <a href="#register" data-page="register" class="link">Создать профиль</a></p>
+                    </div>
+
+                    <div class="mt-1 text-center">
+                        <a href="#" id="forgot-password-link" class="link-secondary">Забыли пароль?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-register">
+        <div class="auth-layout">
+            <div class="card auth-card" style="max-width: 520px;">
+                <div class="card-header auth-header">
+                    <h2>Регистрация</h2>
+                    <p class="text-secondary">Создайте аккаунт пациента для записи на прием</p>
+                </div>
+
+                <div class="card-body">
+                    <form id="register-form">
+                        <div class="grid grid-2" style="gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="register-fullname">Полное имя</label>
+                                <input type="text" class="form-control" id="register-fullname" placeholder="Иван Иванов" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="register-phone">Телефон</label>
+                                <input type="tel" class="form-control" id="register-phone" placeholder="+7 (999) 123-45-67" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="register-email">Email</label>
+                            <input type="email" class="form-control" id="register-email" placeholder="example@mail.com" required>
+                        </div>
+
+                        <div class="grid grid-2" style="gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="register-password">Пароль</label>
+                                <input type="password" class="form-control" id="register-password" placeholder="••••••••" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="register-password-confirm">Подтверждение</label>
+                                <input type="password" class="form-control" id="register-password-confirm" placeholder="••••••••" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+                    </form>
+
+                    <div class="mt-3 text-center">
+                        <p>Уже зарегистрированы? <a href="#login" data-page="login" class="link">Войти</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-services">
+        <div class="card">
+            <div class="card-header flex-between">
+                <h2>Наши услуги</h2>
+                <button class="btn btn-outline btn-sm" type="button" data-action="refresh-services">Обновить</button>
+            </div>
+            <div class="card-body">
+                <div id="services-list" class="grid grid-3"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-patient-dashboard">
+        <div class="card">
+            <div class="card-header flex-between">
+                <h2>Мои записи</h2>
+                <button class="btn btn-primary btn-sm" type="button" data-navigate="new-appointment">Новая запись</button>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Услуга</th>
+                                <th>Врач</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patient-appointments-tbody">
+                            <tr><td colspan="4">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-new-appointment">
+        <div class="card">
+            <div class="card-header">
+                <h2>Новая запись</h2>
+            </div>
+            <div class="card-body">
+                <form id="new-appointment-form">
+                    <div class="grid grid-2" style="gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="appointment-service">Услуга</label>
+                            <select class="form-select" id="appointment-service" required>
+                                <option value="">Загрузка...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="appointment-doctor">Врач</label>
+                            <select class="form-select" id="appointment-doctor" required>
+                                <option value="">Загрузка...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="appointment-datetime">Дата и время</label>
+                        <input class="form-control" type="datetime-local" id="appointment-datetime" required>
+                        <div class="form-help">Выберите удобное время. Администратор/врач сможет уточнить детали при необходимости.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="appointment-notes">Комментарий (необязательно)</label>
+                        <textarea class="form-control" id="appointment-notes" rows="4" placeholder="Например: беспокоит зуб справа, повышенная чувствительность..."></textarea>
+                    </div>
+
+                    <div class="flex-between" style="gap: 1rem;">
+                        <button class="btn btn-outline" type="button" data-navigate="patient-dashboard">Назад</button>
+                        <button class="btn btn-primary" type="submit">Создать запись</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-patient-history">
+        <div class="card">
+            <div class="card-header">
+                <h2>История визитов</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Услуга</th>
+                                <th>Врач</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patient-history-tbody">
+                            <tr><td colspan="4">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-patient-profile">
+        <div class="card">
+            <div class="card-header">
+                <h2>Профиль</h2>
+            </div>
+            <div class="card-body">
+                <form id="patient-profile-form">
+                    <div class="grid grid-2" style="gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="profile-fullname">Полное имя</label>
+                            <input class="form-control" id="profile-fullname" type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-phone">Телефон</label>
+                            <input class="form-control" id="profile-phone" type="tel" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="profile-email">Email</label>
+                        <input class="form-control" id="profile-email" type="email" readonly>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-doctor-dashboard">
+        <div class="card">
+            <div class="card-header">
+                <h2>Расписание</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Пациент</th>
+                                <th>Услуга</th>
+                                <th>Статус</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctor-schedule-tbody">
+                            <tr><td colspan="5">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-doctor-patients">
+        <div class="card">
+            <div class="card-header">
+                <h2>Пациенты</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label" for="doctor-patient-search">Поиск</label>
+                    <input id="doctor-patient-search" class="form-control" type="text" placeholder="Имя или телефон">
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Телефон</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctor-patients-tbody">
+                            <tr><td colspan="3">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-doctor-statistics">
+        <div class="card">
+            <div class="card-header">
+                <h2>Статистика</h2>
+            </div>
+            <div class="card-body">
+                <div id="doctor-stats" class="grid grid-3"></div>
+                <div class="mt-3">
+                    <h3>Отзывы</h3>
+                    <div id="doctor-feedbacks" class="mt-1"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-doctor-profile">
+        <div class="card">
+            <div class="card-header">
+                <h2>Профиль врача</h2>
+            </div>
+            <div class="card-body">
+                <div id="doctor-profile-info"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-admin-dashboard">
+        <div class="card">
+            <div class="card-header">
+                <h2>Панель администратора</h2>
+            </div>
+            <div class="card-body">
+                <div id="admin-stats" class="grid grid-4"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-admin-services">
+        <div class="card">
+            <div class="card-header">
+                <h2>Управление услугами</h2>
+            </div>
+            <div class="card-body">
+                <form id="admin-add-service-form" class="mb-2">
+                    <div class="grid grid-4" style="gap: 1rem; align-items: end;">
+                        <div class="form-group">
+                            <label class="form-label" for="service-name">Название</label>
+                            <input class="form-control" id="service-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="service-category">Категория</label>
+                            <input class="form-control" id="service-category" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="service-price">Цена</label>
+                            <input class="form-control" id="service-price" type="number" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" type="submit" style="width: 100%;">Добавить</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="service-description">Описание</label>
+                        <textarea class="form-control" id="service-description" rows="3"></textarea>
+                    </div>
+                </form>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Категория</th>
+                                <th>Цена</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-services-tbody">
+                            <tr><td colspan="4">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-admin-appointments">
+        <div class="card">
+            <div class="card-header">
+                <h2>Записи</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Пациент</th>
+                                <th>Врач</th>
+                                <th>Услуга</th>
+                                <th>Статус</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-appointments-tbody">
+                            <tr><td colspan="6">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-admin-doctors">
+        <div class="card">
+            <div class="card-header">
+                <h2>Врачи</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>Email</th>
+                                <th>Телефон</th>
+                                <th>Средний рейтинг</th>
+                                <th>Приемов</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-doctors-tbody">
+                            <tr><td colspan="6">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-admin-materials">
+        <div class="card">
+            <div class="card-header">
+                <h2>Материалы</h2>
+            </div>
+            <div class="card-body">
+                <form id="admin-add-material-form" class="mb-2">
+                    <div class="grid grid-4" style="gap: 1rem; align-items: end;">
+                        <div class="form-group">
+                            <label class="form-label" for="material-name">Название</label>
+                            <input class="form-control" id="material-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="material-quantity">Количество</label>
+                            <input class="form-control" id="material-quantity" type="number" min="0" step="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="material-cost">Стоимость</label>
+                            <input class="form-control" id="material-cost" type="number" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" type="submit" style="width: 100%;">Добавить</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Количество</th>
+                                <th>Стоимость</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-materials-tbody">
+                            <tr><td colspan="4">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-admin-receipts">
+        <div class="card">
+            <div class="card-header">
+                <h2>Чеки (завершенные приемы)</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Пациент</th>
+                                <th>Врач</th>
+                                <th>Услуга</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-receipts-tbody">
+                            <tr><td colspan="5">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <!-- Модальные окна -->
     <div id="modal-container"></div>
 
@@ -58,20 +619,6 @@
     <div id="loading-spinner" class="spinner-overlay" style="display: none;">
         <div class="spinner"></div>
     </div>
-
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        
-        // Конфигурация будет в firebase-config.js
-        window.firebaseModules = {
-            initializeApp,
-            getAuth,
-            getFirestore
-        };
-    </script>
 
     <!-- App Scripts -->
     <script type="module" src="js/firebase-config.js"></script>
