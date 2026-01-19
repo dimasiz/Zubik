@@ -170,26 +170,29 @@ export async function navigate(page) {
 // Загрузить домашнюю страницу
 async function loadHomePage() {
     return `
-        <div class="text-center mt-3">
-            <h1>🦷 Добро пожаловать в ДентаКлиник</h1>
-            <p class="mt-2">Современная стоматология с заботой о вас</p>
-            <div class="grid grid-3 mt-3">
-                <div class="card">
-                    <h3>Качество</h3>
-                    <p>Мы используем только современное оборудование и материалы</p>
-                </div>
-                <div class="card">
-                    <h3>Комфорт</h3>
-                    <p>Безболезненное лечение в приятной атмосфере</p>
-                </div>
-                <div class="card">
-                    <h3>Опыт</h3>
-                    <p>Наши врачи - профессионалы с многолетним стажем</p>
-                </div>
-            </div>
+        <div class="hero">
+            <h1>Стоматология нового поколения</h1>
+            <p>Мы объединяем передовые технологии и искреннюю заботу о каждом пациенте для создания вашей идеальной улыбки.</p>
             <div class="mt-3">
                 <button class="btn btn-primary" onclick="window.ui.navigate('services')">Наши услуги</button>
-                <button class="btn btn-outline" onclick="window.ui.navigate('register')">Записаться на прием</button>
+                <button class="btn btn-outline" style="margin-left: 1rem;" onclick="window.ui.navigate('register')">Записаться на прием</button>
+            </div>
+        </div>
+        <div class="grid grid-3 mt-3">
+            <div class="card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
+                <h3>Гарантия качества</h3>
+                <p>Используем только сертифицированные материалы премиум-класса от ведущих мировых производителей.</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">💎</div>
+                <h3>Цифровая точность</h3>
+                <p>Применяем 3D-сканирование и компьютерное моделирование для достижения безупречного результата.</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">☁️</div>
+                <h3>Лечение без боли</h3>
+                <p>Современные методы анестезии и деликатный подход обеспечивают полный комфорт во время процедур.</p>
             </div>
         </div>
     `;
@@ -198,28 +201,38 @@ async function loadHomePage() {
 // Загрузить страницу входа
 async function loadLoginPage() {
     return `
-        <div class="card" style="max-width: 500px; margin: 2rem auto;">
-            <div class="card-header">
-                <h2>Вход в систему</h2>
-            </div>
-            <div class="card-body">
-                <form id="login-form">
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="login-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Пароль</label>
-                        <input type="password" class="form-control" id="login-password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Войти</button>
-                    <button type="button" class="btn btn-outline" id="google-login-btn">Войти через Google</button>
-                </form>
-                <div class="mt-2">
-                    <a href="#" onclick="window.ui.navigate('register')">Нет аккаунта? Зарегистрироваться</a>
+        <div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+            <div class="card" style="max-width: 450px; width: 100%; padding: 3rem;">
+                <div class="card-header" style="text-align: center; border-bottom: none;">
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">С возвращением!</h2>
+                    <p style="color: var(--text-secondary);">Войдите в свой аккаунт ДентаКлиник</p>
                 </div>
-                <div class="mt-1">
-                    <a href="#" id="forgot-password-link">Забыли пароль?</a>
+                <div class="card-body">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="login-email" placeholder="example@mail.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Пароль</label>
+                            <input type="password" class="form-control" id="login-password" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Войти</button>
+                        <div style="text-align: center; margin: 1.5rem 0; color: var(--text-secondary); position: relative;">
+                            <span style="background: var(--bg-color); padding: 0 10px; position: relative; z-index: 1;">или</span>
+                            <hr style="position: absolute; top: 50%; width: 100%; border: 0; border-top: 1px solid var(--border-color); margin: 0;">
+                        </div>
+                        <button type="button" class="btn btn-outline" id="google-login-btn" style="width: 100%;">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; vertical-align: middle; margin-right: 10px;">
+                            Войти через Google
+                        </button>
+                    </form>
+                    <div class="mt-3" style="text-align: center;">
+                        <p>Нет аккаунта? <a href="#" onclick="window.ui.navigate('register')" style="color: var(--secondary-color); font-weight: 600; text-decoration: none;">Создать профиль</a></p>
+                    </div>
+                    <div class="mt-1" style="text-align: center;">
+                        <a href="#" id="forgot-password-link" style="color: var(--text-secondary); font-size: 0.9rem;">Забыли пароль?</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -229,36 +242,43 @@ async function loadLoginPage() {
 // Загрузить страницу регистрации
 async function loadRegisterPage() {
     return `
-        <div class="card" style="max-width: 500px; margin: 2rem auto;">
-            <div class="card-header">
-                <h2>Регистрация пациента</h2>
-            </div>
-            <div class="card-body">
-                <form id="register-form">
-                    <div class="form-group">
-                        <label class="form-label">Полное имя</label>
-                        <input type="text" class="form-control" id="register-fullname" required>
+        <div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+            <div class="card" style="max-width: 500px; width: 100%; padding: 3rem;">
+                <div class="card-header" style="text-align: center; border-bottom: none;">
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Регистрация</h2>
+                    <p style="color: var(--text-secondary);">Станьте пациентом нашей клиники</p>
+                </div>
+                <div class="card-body">
+                    <form id="register-form">
+                        <div class="grid grid-2" style="gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Полное имя</label>
+                                <input type="text" class="form-control" id="register-fullname" placeholder="Иван Иванов" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Телефон</label>
+                                <input type="tel" class="form-control" id="register-phone" placeholder="+7 (999) 123-45-67" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="register-email" placeholder="example@mail.com" required>
+                        </div>
+                        <div class="grid grid-2" style="gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="register-password" placeholder="••••••••" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Подтверждение</label>
+                                <input type="password" class="form-control" id="register-password-confirm" placeholder="••••••••" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Зарегистрироваться</button>
+                    </form>
+                    <div class="mt-3" style="text-align: center;">
+                        <p>Уже зарегистрированы? <a href="#" onclick="window.ui.navigate('login')" style="color: var(--secondary-color); font-weight: 600; text-decoration: none;">Войти</a></p>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="register-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Телефон</label>
-                        <input type="tel" class="form-control" id="register-phone" placeholder="+7 (999) 123-45-67" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Пароль</label>
-                        <input type="password" class="form-control" id="register-password" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Подтвердите пароль</label>
-                        <input type="password" class="form-control" id="register-password-confirm" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
-                </form>
-                <div class="mt-2">
-                    <a href="#" onclick="window.ui.navigate('login')">Уже есть аккаунт? Войти</a>
                 </div>
             </div>
         </div>
