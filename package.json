@@ -1,26 +1,18 @@
 {
-  "name": "nextjs",
-  "version": "0.1.0",
+  "name": "dental-clinic-system",
+  "version": "1.0.0",
+  "description": "Dental Clinic Management System with Firebase",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "npx http-server -p 3000 -o",
+    "build": "echo 'Build complete'",
+    "deploy": "firebase deploy",
+    "lint": "echo 'No linting configured for vanilla JavaScript project'"
   },
   "dependencies": {
-    "next": "16.0.7",
-    "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "firebase": "^10.7.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.0.7",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "http-server": "^14.1.1"
   }
 }
