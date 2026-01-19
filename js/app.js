@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Инициализировать UI
     initUI();
     
+    // Мониторинг подключения для локальной базы
+    setupConnectionMonitoring();
+    
     // Слушать изменения аутентификации
     onAuthChange((userData) => {
         if (userData) {
@@ -35,6 +38,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Настроить обработчики форм после загрузки страницы
     setupFormHandlers();
 });
+
+// Мониторинг подключения
+function setupConnectionMonitoring() {
+    const statusIndicator = document.getElementById('connection-status');
+    if (!statusIndicator) return;
+
+    function updateStatus() {
+        if (navigator.onLine) {
+            statusIndicator.classList.remove('offline');
+            statusIndicator.classList.add('online');
+            statusIndicator.title = 'В сети (Firebase синхронизирован)';
+        } else {
+            statusIndicator.classList.remove('online');
+            statusIndicator.classList.add('offline');
+            statusIndicator.title = 'Офлайн (используется локальная база данных)';
+            showNotification('Вы работаете в автономном режиме. Данные сохраняются локально.', 'info');
+        }
+    }
+
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    updateStatus();
+}
 
 // Настроить обработчики форм
 function setupFormHandlers() {
