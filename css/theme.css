@@ -1,0 +1,71 @@
+/* Светлая и тёмная темы */
+
+/* Тёмная тема */
+[data-theme="dark"] {
+    --primary-color: #1a252f;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    
+    --bg-color: #0d1117;
+    --surface-color: #161b22;
+    --text-color: #c9d1d9;
+    --text-secondary: #8b949e;
+    --border-color: #30363d;
+    
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .navbar {
+    background-color: #161b22;
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .table {
+    background-color: var(--surface-color);
+}
+
+[data-theme="dark"] .table thead {
+    background-color: #1a252f;
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: var(--surface-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .modal {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .footer {
+    background-color: #161b22;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Плавный переход между темами */
+body,
+.navbar,
+.card,
+.modal,
+.form-control,
+.form-select,
+.table {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
