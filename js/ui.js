@@ -52,6 +52,63 @@ const fallbackDoctors = [
 let cachedServices = null;
 let cachedDoctors = null;
 
+// Функция для показа модального окна отзыва
+function showFeedbackModal(appointment, createFeedback, servicesMap, doctorsMap) {
+    const modal = createModal(
+        'Отзыв о приеме',
+        `
+            <div class="form-group">
+                <label class="form-label" for="feedback-rating">Оценка</label>
+                <select class="form-select" id="feedback-rating">
+                    <option value="5">5 — отлично</option>
+                    <option value="4">4 — хорошо</option>
+                    <option value="3">3 — нормально</option>
+                    <option value="2">2 — плохо</option>
+                    <option value="1">1 — очень плохо</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="feedback-comment">Комментарий</label>
+                <textarea class="form-control" id="feedback-comment" rows="4" placeholder="Что понравилось? Что можно улучшить?"></textarea>
+            </div>
+        `,
+        [
+            { text: 'Отмена', className: 'btn-secondary' },
+            {
+                text: 'Отправить',
+                className: 'btn-primary',
+                onClick: async () => {
+                    const rating = parseInt(modal.querySelector('#feedback-rating')?.value || '5', 10);
+                    const comment = modal.querySelector('#feedback-comment')?.value || '';
+
+                    if (!comment.trim()) {
+                        showNotification('Пожалуйста, напишите комментарий', 'warning');
+                        return;
+                    }
+
+                    try {
+                        await createFeedback({
+                            appointmentId: appointment.id,
+                            doctorId: appointment.doctorId,
+                            rating,
+                            comment
+                        });
+
+                        showNotification('Спасибо за ваш отзыв!', 'success');
+                        modal.close();
+                        
+                        // Обновить страницу для отображения отправленного отзыва
+                        initPatientHistoryPage();
+                    } catch (error) {
+                        console.error('Ошибка отправки отзыва:', error);
+                        showNotification('Ошибка отправки отзыва', 'error');
+                    }
+                }
+            }
+        ]
+    );
+}
+
 // Инициализация UI
 export function initUI() {
     setupNavigation();
@@ -59,6 +116,83 @@ export function initUI() {
     setupAppNavigationDelegation();
     setupModalAuth();
     updateNavigation();
+    setupGlobalEventHandlers();
+}
+
+function setupGlobalEventHandlers() {
+    // Глобальные обработчики для кнопок
+    document.addEventListener('refreshServices', () => {
+        initServicesPage();
+    });
+
+    document.addEventListener('deleteService', async (e) => {
+        const serviceId = e.detail.serviceId;
+        try {
+            const { deleteService } = await import('./admin.js');
+            await deleteService(serviceId);
+            showNotification('Услуга удалена', 'success');
+            
+            // Обновить страницу услуг если мы на ней
+            const currentPage = getCurrentPageFromHash();
+            if (currentPage === 'admin-services') {
+                initAdminServicesPage();
+            }
+        } catch (error) {
+            console.error('Ошибка удаления услуги:', error);
+            showNotification('Ошибка удаления услуги', 'error');
+        }
+    });
+
+    document.addEventListener('editService', async (e) => {
+        const serviceId = e.detail.serviceId;
+        // Показываем модальное окно редактирования (можно реализовать позже)
+        showNotification('Функция редактирования будет добавлена позже', 'info');
+    });
+
+    document.addEventListener('updateAppointmentStatus', async (e) => {
+        const { appointmentId, status } = e.detail;
+        try {
+            const { updateAppointmentStatus } = await import('./admin.js');
+            await updateAppointmentStatus(appointmentId, status);
+            showNotification('Статус обновлен', 'success');
+            
+            // Обновить текущую страницу
+            const currentPage = getCurrentPageFromHash();
+            if (currentPage === 'admin-appointments') {
+                initAdminAppointmentsPage();
+            } else if (currentPage === 'doctor-dashboard') {
+                initDoctorDashboardPage();
+            }
+        } catch (error) {
+            console.error('Ошибка обновления статуса:', error);
+            showNotification('Ошибка обновления статуса', 'error');
+        }
+    });
+
+    document.addEventListener('cancelAppointment', async (e) => {
+        const appointmentId = e.detail.appointmentId;
+        try {
+            const { cancelAppointment } = await import('./admin.js');
+            await cancelAppointment(appointmentId);
+            showNotification('Запись отменена', 'success');
+            
+            // Обновить текущую страницу
+            const currentPage = getCurrentPageFromHash();
+            if (currentPage === 'admin-appointments') {
+                initAdminAppointmentsPage();
+            } else if (currentPage === 'patient-dashboard') {
+                initPatientDashboardPage();
+            }
+        } catch (error) {
+            console.error('Ошибка отмены записи:', error);
+            showNotification('Ошибка отмены записи', 'error');
+        }
+    });
+}
+
+function getCurrentPageFromHash() {
+    const hash = window.location.hash.replace('#', '').trim();
+    return hash || 'home';
 }
 
 function setupAppNavigationDelegation() {
@@ -337,10 +471,16 @@ async function initServicesPage() {
     const list = document.getElementById('services-list');
     if (!list) return;
 
+    // Удаляем старый обработчик и добавляем новый через event listener
     const refreshBtn = document.querySelector('[data-action="refresh-services"]');
     if (refreshBtn) {
-        refreshBtn.onclick = () => initServicesPage();
+        refreshBtn.onclick = null; // Убираем старый обработчик
+        refreshBtn.addEventListener('click', () => initServicesPage());
     }
+
+    // Добавляем обработчик CustomEvent для глобального обновления
+    const refreshServicesHandler = () => initServicesPage();
+    document.addEventListener('refreshServices', refreshServicesHandler);
 
     list.innerHTML = '<p>Загрузка услуг...</p>';
 
@@ -486,6 +626,18 @@ async function initPatientHistoryPage() {
             })
             .join('');
 
+        // Добавляем глобальные обработчики событий
+        const showFeedbackHandler = (e) => {
+            const appointmentId = e.detail.appointmentId;
+            const historyItem = history.find(a => a.id === appointmentId);
+            if (historyItem) {
+                showFeedbackModal(historyItem, createFeedback, servicesMap, doctorsMap);
+            }
+        };
+        
+        document.addEventListener('showFeedback', showFeedbackHandler);
+
+        // Локальный обработчик для обратной совместимости
         tbody.addEventListener('click', (e) => {
             const btn = e.target.closest('button[data-action="feedback"]');
             if (!btn) return;
@@ -494,43 +646,10 @@ async function initPatientHistoryPage() {
             const doctorId = btn.getAttribute('data-doctor-id');
             if (!appointmentId || !doctorId) return;
 
-            const modal = createModal(
-                'Отзыв о приеме',
-                `
-                    <div class="form-group">
-                        <label class="form-label" for="feedback-rating">Оценка</label>
-                        <select class="form-select" id="feedback-rating">
-                            <option value="5">5 — отлично</option>
-                            <option value="4">4 — хорошо</option>
-                            <option value="3">3 — нормально</option>
-                            <option value="2">2 — плохо</option>
-                            <option value="1">1 — очень плохо</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="feedback-comment">Комментарий</label>
-                        <textarea class="form-control" id="feedback-comment" rows="4" placeholder="Что понравилось? Что можно улучшить?"></textarea>
-                    </div>
-                `,
-                [
-                    { text: 'Отмена', className: 'btn-secondary' },
-                    {
-                        text: 'Отправить',
-                        className: 'btn-primary',
-                        onClick: () => {
-                            const rating = parseInt(modal.querySelector('#feedback-rating')?.value || '5', 10);
-                            const comment = modal.querySelector('#feedback-comment')?.value || '';
-
-                            createFeedback({
-                                appointmentId,
-                                doctorId,
-                                rating,
-                                comment
-                            }).catch((error) => console.error(error));
-                        }
-                    }
-                ]
-            );
+            const historyItem = history.find(a => a.id === appointmentId);
+            if (historyItem) {
+                showFeedbackModal(historyItem, createFeedback, servicesMap, doctorsMap);
+            }
         });
     } catch (error) {
         console.error(error);
