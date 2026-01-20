@@ -7,7 +7,8 @@ import {
     formatPrice,
     generateStarRating,
     createModal,
-    confirm
+    confirm,
+    findClosest
 } from './utils.js';
 
 const fallbackServices = [
@@ -201,7 +202,7 @@ function setupAppNavigationDelegation() {
 
     // Для кнопок используем data-navigate, а навигацию делаем через hash (app.js обработает hashchange)
     app.addEventListener('click', (e) => {
-        const target = e.target.closest('[data-navigate]');
+        const target = findClosest(e.target, '[data-navigate]');
         if (!target) return;
 
         const page = target.getAttribute('data-navigate');
@@ -223,7 +224,7 @@ function setupNavigation() {
 
 // Обработчик делегирования для навигации
 document.addEventListener('click', (e) => {
-    const link = e.target.closest('[data-page]');
+    const link = findClosest(e.target, '[data-page]');
     if (!link) return;
 
     const page = link.getAttribute('data-page');
@@ -639,7 +640,7 @@ async function initPatientHistoryPage() {
 
         // Локальный обработчик для обратной совместимости
         tbody.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-action="feedback"]');
+            const btn = findClosest(e.target, 'button[data-action="feedback"]');
             if (!btn) return;
 
             const appointmentId = btn.getAttribute('data-appointment-id');
@@ -736,7 +737,7 @@ async function initDoctorDashboardPage() {
             .join('');
 
         tbody.onclick = (e) => {
-            const completeBtn = e.target.closest('button[data-action="complete"]');
+            const completeBtn = findClosest(e.target, 'button[data-action="complete"]');
             if (completeBtn) {
                 const appointmentId = completeBtn.getAttribute('data-appointment-id');
                 if (!appointmentId) return;
@@ -753,7 +754,7 @@ async function initDoctorDashboardPage() {
                 return;
             }
 
-            const notesBtn = e.target.closest('button[data-action="notes"]');
+            const notesBtn = findClosest(e.target, 'button[data-action="notes"]');
             if (notesBtn) {
                 const appointmentId = notesBtn.getAttribute('data-appointment-id');
                 if (!appointmentId) return;
@@ -998,7 +999,7 @@ async function initAdminServicesPage() {
     });
 
     tbody.addEventListener('click', async (e) => {
-        const btn = e.target.closest('button[data-action]');
+        const btn = findClosest(e.target, 'button[data-action]');
         if (!btn) return;
 
         const id = btn.getAttribute('data-id');
@@ -1113,7 +1114,7 @@ async function initAdminAppointmentsPage() {
                 .join('');
 
             tbody.onclick = (e) => {
-                const btn = e.target.closest('button[data-action="cancel"]');
+                const btn = findClosest(e.target, 'button[data-action="cancel"]');
                 if (!btn) return;
 
                 const id = btn.getAttribute('data-id');
@@ -1168,7 +1169,7 @@ async function initAdminDoctorsPage() {
             .join('');
 
         tbody.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-action="schedule"]');
+            const btn = findClosest(e.target, 'button[data-action="schedule"]');
             if (!btn) return;
 
             const doctorId = btn.getAttribute('data-id');
@@ -1271,7 +1272,7 @@ async function initAdminMaterialsPage() {
     });
 
     tbody.addEventListener('click', (e) => {
-        const btn = e.target.closest('button[data-action]');
+        const btn = findClosest(e.target, 'button[data-action]');
         if (!btn) return;
 
         const id = btn.getAttribute('data-id');
@@ -1380,7 +1381,7 @@ async function initAdminReceiptsPage() {
             .join('');
 
         tbody.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-action="receipt"]');
+            const btn = findClosest(e.target, 'button[data-action="receipt"]');
             if (!btn) return;
 
             const id = btn.getAttribute('data-id');

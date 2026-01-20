@@ -2,7 +2,7 @@
 import { onAuthChange } from './auth.js';
 import { initUI, updateNavigation, navigate, showAuthModal, hideAuthModal } from './ui.js';
 import { login, register, loginWithGoogle, resetPassword } from './auth.js';
-import { showNotification, validateEmail, validatePhone } from './utils.js';
+import { showNotification, validateEmail, validatePhone, findClosest } from './utils.js';
 
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', () => {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupNavigationClicks() {
     // Handle all [data-page] clicks for navigation (эти кнопки ведут на публичные страницы)
     document.addEventListener('click', (e) => {
-        const link = e.target.closest('[data-page]');
+        const link = findClosest(e.target, '[data-page]');
         if (!link) return;
 
         e.preventDefault();
@@ -95,7 +95,7 @@ function setupNavigationClicks() {
 function setupGlobalEventHandlers() {
     // Handle data-navigate attributes
     document.addEventListener('click', (e) => {
-        const button = e.target.closest('[data-navigate]');
+        const button = findClosest(e.target, '[data-navigate]');
         if (!button) return;
 
         e.preventDefault();
@@ -105,7 +105,7 @@ function setupGlobalEventHandlers() {
 
     // Handle data-action attributes for services refresh
     document.addEventListener('click', (e) => {
-        const button = e.target.closest('[data-action]');
+        const button = findClosest(e.target, '[data-action]');
         if (!button) return;
 
         const action = button.getAttribute('data-action');
