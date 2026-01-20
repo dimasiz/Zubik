@@ -1,6 +1,6 @@
 // Главный файл приложения
 import { onAuthChange } from './auth.js';
-import { initUI, updateNavigation, navigate } from './ui.js';
+import { initUI, updateNavigation, navigate, showAuthModal, hideAuthModal } from './ui.js';
 import { login, register, loginWithGoogle, resetPassword } from './auth.js';
 import { showNotification, validateEmail, validatePhone } from './utils.js';
 
@@ -11,22 +11,40 @@ document.addEventListener('DOMContentLoaded', () => {
     initUI();
     setupConnectionMonitoring();
     setupFormHandlers();
+    setupNavigationClicks();
 
     // Навигация по хэшу
     window.addEventListener('hashchange', () => {
-        navigate(getPageFromHash());
+        const page = getPageFromHash();
+        if (['login', 'register'].includes(page)) {
+            showAuthModal(page);
+        } else {
+            navigate(page);
+        }
     });
 
     // Показать страницу из URL-хэша (если есть), чтобы страница не была пустой
-    goTo(getPageFromHash());
+    const initialPage = getPageFromHash();
+    if (['login', 'register'].includes(initialPage)) {
+        showAuthModal(initialPage);
+    } else {
+        goTo(initialPage);
+    }
 
     // Слушать изменения аутентификации
     onAuthChange((userData) => {
         updateNavigation();
 
         const requestedPage = getPageFromHash();
+        const modal = document.getElementById('auth-modal');
+        const isModalOpen = modal && !modal.classList.contains('hidden') && modal.classList.contains('show');
 
         if (userData) {
+            // Если модальное окно открыто, закрыть его
+            if (isModalOpen) {
+                hideAuthModal();
+            }
+
             const roleHome =
                 userData.role === 'patient'
                     ? 'patient-dashboard'
@@ -35,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         : 'admin-dashboard';
 
             // Если пользователь уже вошел, то страницы входа/регистрации не показываем
-            if (['home', 'login', 'register'].includes(requestedPage)) {
+            if (['home', 'services', 'login', 'register'].includes(requestedPage)) {
                 goTo(roleHome);
                 return;
             }
@@ -46,9 +64,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Неавторизованный пользователь может посещать только публичные страницы
         const publicPages = new Set(['home', 'services', 'login', 'register']);
-        goTo(publicPages.has(requestedPage) ? requestedPage : 'login');
+        const targetPage = publicPages.has(requestedPage) ? requestedPage : 'home';
+        
+        if (['login', 'register'].includes(targetPage) && !isModalOpen) {
+            showAuthModal(targetPage);
+        } else if (!['login', 'register'].includes(targetPage)) {
+            goTo(targetPage);
+        }
     });
 });
+
+function setupNavigationClicks() {
+    // Handle all [data-page] clicks for navigation
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('[data-page]');
+        if (!link) return;
+
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        
+        if (['login', 'register'].includes(page)) {
+            showAuthModal(page);
+        } else {
+            goTo(page);
+        }
+    });
+}
+
+function setupGlobalEventHandlers() {
+    // Handle data-navigate attributes
+    document.addEventListener('click', (e) => {
+        const button = e.target.closest('[data-navigate]');
+        if (!button) return;
+
+        e.preventDefault();
+        const page = button.getAttribute('data-navigate');
+        goTo(page);
+    });
+
+    // Handle data-action attributes for services refresh
+    document.addEventListener('click', (e) => {
+        const button = e.target.closest('[data-action]');
+        if (!button) return;
+
+        const action = button.getAttribute('data-action');
+        
+        switch (action) {
+            case 'refresh-services':
+                e.preventDefault();
+                // The event will be handled in ui.js initServicesPage
+                break;
+            
+            case 'feedback':
+                e.preventDefault();
+                // The event will be handled in ui.js initPatientHistoryPage
+                break;
+        }
+    });
+}
 
 function goTo(page) {
     const current = window.location.hash.replace('#', '').trim();
