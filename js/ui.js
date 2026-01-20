@@ -57,6 +57,7 @@ export function initUI() {
     setupNavigation();
     setupThemeToggle();
     setupAppNavigationDelegation();
+    setupModalAuth();
     updateNavigation();
 }
 
@@ -85,6 +86,18 @@ function setupNavigation() {
         });
     }
 }
+
+// Обработчик делегирования для навигации
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-page]');
+    if (!link) return;
+
+    const page = link.getAttribute('data-page');
+    if (page === 'login' || page === 'register') {
+        e.preventDefault();
+        showAuthModal(page);
+    }
+});
 
 // Настройка переключателя темы
 function setupThemeToggle() {
@@ -1389,8 +1402,209 @@ function safeJsonParse(value) {
     }
 }
 
+// Функции для работы с модальным окном авторизации
+function setupModalAuth() {
+    const modal = document.getElementById('auth-modal');
+    const loginTab = document.getElementById('auth-tab-login');
+    const registerTab = document.getElementById('auth-tab-register');
+    const closeBtn = document.getElementById('auth-modal-close');
+    
+    if (!modal || !loginTab || !registerTab || !closeBtn) {
+        console.error('Modal elements not found');
+        return;
+    }
+
+    // Закрытие модального окна
+    closeBtn.addEventListener('click', hideAuthModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            hideAuthModal();
+        }
+    });
+
+    // Переключение вкладок
+    loginTab.addEventListener('click', () => showAuthTab('login'));
+    registerTab.addEventListener('click', () => showAuthTab('register'));
+}
+
+export function showAuthModal(tab = 'login') {
+    const modal = document.getElementById('auth-modal');
+    const body = document.getElementById('auth-modal-body');
+    
+    if (!modal || !body) return;
+
+    // Загрузить нужный шаблон
+    const templateId = tab === 'login' ? 'tpl-login' : 'tpl-register';
+    body.innerHTML = loadTemplate(templateId);
+
+    // Показать модальное окно
+    showAuthTab(tab);
+    modal.classList.remove('hidden');
+    setTimeout(() => modal.classList.add('show'), 10);
+
+    // Инициализировать форму
+    setTimeout(() => {
+        if (tab === 'login') {
+            initLoginForm();
+        } else {
+            initRegisterForm();
+        }
+    }, 100);
+}
+
+export function hideAuthModal() {
+    const modal = document.getElementById('auth-modal');
+    if (!modal) return;
+
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+function showAuthTab(tab) {
+    const modal = document.getElementById('auth-modal');
+    const loginTab = document.getElementById('auth-tab-login');
+    const registerTab = document.getElementById('auth-tab-register');
+    const body = document.getElementById('auth-modal-body');
+
+    if (!modal || !loginTab || !registerTab || !body) return;
+
+    // Переключить активную вкладку
+    loginTab.classList.toggle('active', tab === 'login');
+    registerTab.classList.toggle('active', tab === 'register');
+
+    // Загрузить нужный шаблон
+    const templateId = tab === 'login' ? 'tpl-login' : 'tpl-register';
+    body.innerHTML = loadTemplate(templateId);
+
+    // Инициализировать форму
+    setTimeout(() => {
+        if (tab === 'login') {
+            initLoginForm();
+        } else {
+            initRegisterForm();
+        }
+    }, 100);
+}
+
+function initLoginForm() {
+    const form = document.querySelector('#login-form');
+    const googleBtn = document.querySelector('#google-login-btn');
+    const forgotLink = document.querySelector('#forgot-password-link');
+
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleLoginModal();
+        });
+    }
+
+    if (googleBtn) {
+        googleBtn.addEventListener('click', async () => {
+            const { loginWithGoogle } = await import('./auth.js');
+            try {
+                hideAuthModal();
+                await loginWithGoogle();
+            } catch (error) {
+                console.error('Ошибка входа через Google:', error);
+            }
+        });
+    }
+
+    if (forgotLink) {
+        forgotLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = prompt('Введите ваш email для восстановления пароля:');
+            if (!email) return;
+
+            const { resetPassword, showNotification } = await import('./auth.js');
+            try {
+                await resetPassword(email);
+            } catch (error) {
+                console.error('Ошибка восстановления пароля:', error);
+            }
+        });
+    }
+}
+
+function initRegisterForm() {
+    const form = document.querySelector('#register-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await handleRegisterModal();
+    });
+}
+
+async function handleLoginModal() {
+    const email = document.querySelector('#login-email')?.value;
+    const password = document.querySelector('#login-password')?.value;
+    
+    if (!email || !password) {
+        const { showNotification } = await import('./utils.js');
+        showNotification('Заполните все поля', 'warning');
+        return;
+    }
+
+    try {
+        const { login } = await import('./auth.js');
+        hideAuthModal();
+        await login(email, password);
+    } catch (error) {
+        console.error('Ошибка входа:', error);
+    }
+}
+
+async function handleRegisterModal() {
+    const fullName = document.querySelector('#register-fullname')?.value;
+    const email = document.querySelector('#register-email')?.value;
+    const phone = document.querySelector('#register-phone')?.value;
+    const password = document.querySelector('#register-password')?.value;
+    const passwordConfirm = document.querySelector('#register-password-confirm')?.value;
+
+    // Валидация
+    if (!fullName || !email || !phone || !password) {
+        const { showNotification } = await import('./utils.js');
+        showNotification('Заполните все поля', 'warning');
+        return;
+    }
+
+    const { validateEmail, validatePhone, showNotification } = await import('./utils.js');
+    if (!validateEmail(email)) {
+        showNotification('Введите корректный email', 'warning');
+        return;
+    }
+
+    if (!validatePhone(phone)) {
+        showNotification('Введите корректный номер телефона', 'warning');
+        return;
+    }
+
+    if (password !== passwordConfirm) {
+        showNotification('Пароли не совпадают', 'warning');
+        return;
+    }
+
+    if (password.length < 6) {
+        showNotification('Пароль должен быть не менее 6 символов', 'warning');
+        return;
+    }
+
+    try {
+        const { register } = await import('./auth.js');
+        hideAuthModal();
+        await register(email, password, { fullName, phone });
+    } catch (error) {
+        console.error('Ошибка регистрации:', error);
+    }
+}
+
 // Экспорт для глобального доступа
 window.ui = {
     navigate,
-    updateNavigation
+    updateNavigation,
+    showAuthModal,
+    hideAuthModal
 };
