@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupConnectionMonitoring();
     setupFormHandlers();
     setupNavigationClicks();
+    setupGlobalEventHandlers();
 
     // Навигация по хэшу
     window.addEventListener('hashchange', () => {
@@ -75,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupNavigationClicks() {
-    // Handle all [data-page] clicks for navigation
+    // Handle all [data-page] clicks for navigation (эти кнопки ведут на публичные страницы)
     document.addEventListener('click', (e) => {
         const link = e.target.closest('[data-page]');
         if (!link) return;
@@ -112,12 +113,57 @@ function setupGlobalEventHandlers() {
         switch (action) {
             case 'refresh-services':
                 e.preventDefault();
-                // The event will be handled in ui.js initServicesPage
+                // Trigger custom event for services refresh
+                document.dispatchEvent(new CustomEvent('refreshServices'));
                 break;
             
             case 'feedback':
                 e.preventDefault();
-                // The event will be handled in ui.js initPatientHistoryPage
+                // Trigger custom event for feedback
+                document.dispatchEvent(new CustomEvent('showFeedback', { 
+                    detail: { appointmentId: button.dataset.appointmentId } 
+                }));
+                break;
+                
+            case 'delete-service':
+                e.preventDefault();
+                const serviceId = button.dataset.serviceId;
+                if (serviceId) {
+                    document.dispatchEvent(new CustomEvent('deleteService', { 
+                        detail: { serviceId } 
+                    }));
+                }
+                break;
+                
+            case 'edit-service':
+                e.preventDefault();
+                const editServiceId = button.dataset.serviceId;
+                if (editServiceId) {
+                    document.dispatchEvent(new CustomEvent('editService', { 
+                        detail: { serviceId: editServiceId } 
+                    }));
+                }
+                break;
+                
+            case 'update-appointment-status':
+                e.preventDefault();
+                const appointmentId = button.dataset.appointmentId;
+                const newStatus = button.dataset.status;
+                if (appointmentId && newStatus) {
+                    document.dispatchEvent(new CustomEvent('updateAppointmentStatus', { 
+                        detail: { appointmentId, status: newStatus } 
+                    }));
+                }
+                break;
+                
+            case 'cancel-appointment':
+                e.preventDefault();
+                const cancelAppointmentId = button.dataset.appointmentId;
+                if (cancelAppointmentId) {
+                    document.dispatchEvent(new CustomEvent('cancelAppointment', { 
+                        detail: { appointmentId: cancelAppointmentId } 
+                    }));
+                }
                 break;
         }
     });
