@@ -11,6 +11,15 @@ export function hideLoading() {
     if (spinner) spinner.style.display = 'none';
 }
 
+export function findClosest(target, selector) {
+    if (!target) return null;
+
+    const element = target instanceof Element ? target : target.parentElement;
+    if (!element || typeof element.closest !== 'function') return null;
+
+    return element.closest(selector);
+}
+
 // Показать уведомление
 export function showNotification(message, type = 'info') {
     const alertDiv = document.createElement('div');
